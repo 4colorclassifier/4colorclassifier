@@ -6,6 +6,7 @@
 #include "coded_bloom_filter.h"
 #include "multi_bloom_filter.h"
 #include "shifting_bloom_filter.h"
+#include "counting_bloom_filter.h"
 
 #define MAXN 100000
 
@@ -34,6 +35,7 @@ void test_two_set()
     }
 
     auto cc = new ShiftingColoringClassifier<int(MAXN * 1.11), 4, 2>();
+    // auto cc = new MultiBloomFilter<int(MAXN * 10), 4, 2>();
 
     bool build_result = cc->build(data, MAXN);
     cout << "Build 4-color classifier for " << MAXN << " items" << endl;
@@ -50,9 +52,39 @@ void test_two_set()
     }
 }
 
+void cbf_test()
+{
+    auto cbf = CountingBloomFilter<8, 2, 2, 2>();
+    int a = 0, b = 0, c = 0;
+    while(a >= 0)
+    {
+        cin >> a >> b;
+        switch (a)
+        {
+            case 1:
+                cin >> c;
+                cbf.insert(b, c);
+                break;
+            case 2:
+                cbf.remove(b);
+                break;
+            case 3:
+                cin >> c;
+                cout << bool(cbf.query_bf(b, c)) << endl;
+                break;
+            case 4:
+                cout << cbf.query_multiway(b).size() << endl;
+                break;
+            case 5:
+                cbf.update(1, cbf.flip);
+                break;
+        }
+        cout << cbf.bf[0] << " " << cbf.count[0] << endl;
+    }
+}
+
 int main()
 {
     test_two_set();
-
     return 0;
 }
